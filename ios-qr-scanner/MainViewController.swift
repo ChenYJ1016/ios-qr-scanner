@@ -16,12 +16,13 @@ class MainViewController: UIViewController {
         return layout
     }()
 
-//    private var listLayout: UICollectionViewFlowLayout = {
-//        let layout = UICollectionViewFlowLayout()
-//        layout.minimumLineSpacing = 10
-//        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-//        return layout
-//    }()
+    private var listLayout: UICollectionViewFlowLayout = {
+        let layout = UICollectionViewFlowLayout()
+        layout.minimumLineSpacing = 10
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 20, height: 80)
+        return layout
+    }()
     
     
     // MARK: - View Lifecycle
@@ -53,8 +54,20 @@ class MainViewController: UIViewController {
         
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
+        
+        segmentedControl.selectedSegmentIndex = 0
+        //collectionView.collectionViewLayout = listLayout
+        //segmentedControl.selectedSegmentIndex = 1
+        segmentedControl.addTarget(self, action: #selector(layoutChanged), for: .valueChanged)
     }
     
+    
+    @objc private func layoutChanged() {
+        let layout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
+        collectionView.setCollectionViewLayout(layout, animated: true)
+        collectionView.reloadData()
+    }
+
     // MARK: - Helper methods
     
     private func setupNavigationBar(){
@@ -73,12 +86,14 @@ class MainViewController: UIViewController {
     private func setupCollectionView(){
 
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(QRListCell.self, forCellWithReuseIdentifier: QRListCell.reuseID)
+
     }
     
-//    private func setupSegmentedControl(){
-//        segmentedControl.selectedSegmentIndex = 0
-//        segmentedControl.addTarget(self, action: #selector(layoutChanged), for: .valueChanged)
-//    }
+    private func setupSegmentedControl(){
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.addTarget(self, action: #selector(layoutChanged), for: .valueChanged)
+    }
 
 //    @objc private func layoutChanged() {
 //        let layout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
@@ -99,32 +114,47 @@ class MainViewController: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
+}
+
+extension MainViewController: UICollectionViewDelegate{
     
+    private let items: [QRCode] = [
+        QRCode(url: "https://www.apple.com", date: Date(timeIntervalSinceNow: -1200)),
+        QRCode(url: "WIFI:T:WPA;S:MyNetwork;P:password123;;", date: Date(timeIntervalSinceNow: -3600)),
+        QRCode(url: "mailto:hello@example.com", date: Date(timeIntervalSinceNow: -7200)),
+        QRCode(url: "tel:+1234567890", date: Date(timeIntervalSinceNow: -10800))
+    ]
 }
 
 extension MainViewController: UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        return items.count
     }
+    
 }
 
 extension MainViewController: UICollectionViewDelegate{
     
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        
-        if segmentedControl.selectedSegmentIndex == 0 {
-            cell.backgroundColor = .systemTeal
-        } else {
+
+        let item = items[indexPath.item]
+//       /* if segmentedControl.selectedSegmentIndex == 0*/ {
+//            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+//            cell.backgroundColor = .systemTeal
+//            cell.layer.cornerRadius = 8
+//            return cell
+//        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: QRListCell.reuseID, for: indexPath) as! QRListCell
             cell.backgroundColor = .systemOrange
+            let df = DateFormatter()
+            df.dateFormat = "dd/MM/yy, HH:mm"
+            cell.configure(title: item.url, dateText: df.string(from: item.date))
+            return cell
         }
-        cell.layer.cornerRadius = 8
-        
-        return cell
+
     }
-    
-}
+//}
 
 extension MainViewController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView,
@@ -140,18 +170,15 @@ extension MainViewController: UICollectionViewDelegateFlowLayout{
             let spacing = gridLayout.minimumInteritemSpacing
             let totalPadding = gridLayout.sectionInset.left + gridLayout.sectionInset.right + spacing
             let width = (contentWidth - totalPadding) / 2
-            
             let validWidth = max(0, width)
             return CGSize(width: validWidth, height: validWidth)
 
-//        } else if collectionViewLayout == listLayout {
-//            let totalPadding = listLayout.sectionInset.left + listLayout.sectionInset.right
-//            let width = contentWidth - totalPadding
-//            
-//            let validWidth = max(0, width)
-//            return CGSize(width: validWidth, height: 80)
+        } else if collectionViewLayout == listLayout {
+            let totalPadding = listLayout.sectionInset.left + listLayout.sectionInset.right
+            let width = contentWidth - totalPadding
+            let validWidth = max(0, width)
+            return CGSize(width: validWidth, height: 80)
         }
-
         return CGSize(width: 50, height: 50)
     }
 }
