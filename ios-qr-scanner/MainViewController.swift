@@ -71,6 +71,14 @@ class MainViewController: UIViewController {
         layout.scrollDirection = .vertical
 
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        
+        
+        //add on for this
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.backgroundColor = .clear
+        view.addSubview(collectionView)
+        collectionView.register(QRListCell.self, forCellWithReuseIdentifier: QRListCell.reuseID)
+        collectionView.dataSource = self
     }
     
     private func setupSegmentedControl(){
@@ -83,10 +91,49 @@ class MainViewController: UIViewController {
     @objc private func layoutChanged() {
         let layout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
         collectionView.setCollectionViewLayout(layout, animated: true)
+        collectionView.reloadData()
     }
     
     private func setupUI(){
-        
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 12),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -12),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
+    
+    
+    // add on by xf//
+    private struct QRItem {
+        let text: String
+        let date: Date
+    }
+
+    private let dateFormatter: DateFormatter = {
+        let df = DateFormatter()
+        df.dateFormat = "dd/MM/yy, HH:mm"
+        return df
+    }()
+
+    private var items: [QRItem] = [
+        QRItem(text: "https://www.apple.com", date: Date(timeIntervalSinceNow: -1200)),
+        QRItem(text: "WIFI:T:WPA;S:MyNetwork;P:password123;;", date: Date(timeIntervalSinceNow: -3600)),
+        QRItem(text: "mailto:hello@example.com", date: Date(timeIntervalSinceNow: -7200)),
+        QRItem(text: "tel:+1234567890", date: Date(timeIntervalSinceNow: -10800))
+    ]
 }
 
+extension MainViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        items.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let item = items[indexPath.item]
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: QRListCell.reuseID, for: indexPath) as! QRListCell
+        cell.configure(title: item.text, dateText: dateFormatter.string(from: item.date))
+        return cell
+    }
+    
+}
