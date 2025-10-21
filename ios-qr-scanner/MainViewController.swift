@@ -114,6 +114,9 @@ class MainViewController: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
+}
+
+extension MainViewController: UICollectionViewDelegate{
     
     private let items: [QRCode] = [
         QRCode(url: "https://www.apple.com", date: Date(timeIntervalSinceNow: -1200)),
@@ -127,6 +130,7 @@ extension MainViewController: UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return items.count
     }
+    
 }
 
 extension MainViewController: UICollectionViewDelegate{
