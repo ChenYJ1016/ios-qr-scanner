@@ -100,12 +100,6 @@ class MainViewController: UIViewController {
 
     }
     
-    @objc private func layoutChanged() {
-        let layout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
-        collectionView.setCollectionViewLayout(layout, animated: true)
-        collectionView.reloadData()
-    }
-    
     @objc private func onScanTapped() {
         let vc = ScanViewController()
         vc.modalPresentationStyle = .fullScreen
@@ -118,6 +112,9 @@ class MainViewController: UIViewController {
         present(vc, animated: true)
     }
 
+            
+    @objc private func layoutChanged() {
+            print("index: \(segmentedControl.selectedSegmentIndex)")
             
             // 1. Get the new layout
             let newLayout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
