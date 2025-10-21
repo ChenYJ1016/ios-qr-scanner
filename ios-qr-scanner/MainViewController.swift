@@ -1,139 +1,180 @@
-//
-//  ViewController.swift
-//  ios-qr-scanner
-//
-//  Created by James Chen on 21/10/25.
-//
-
 import UIKit
 
 class MainViewController: UIViewController {
     
+    // MARK: - Properties
+    
     let segmentedControl = UISegmentedControl(items: ["Grid", "List"])
-    let layout = UICollectionViewFlowLayout()
+    
     var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
     private var gridLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
-        let width = (UIScreen.main.bounds.width - 30) / 2
-        layout.itemSize = CGSize(width: width, height: width)
         layout.minimumInteritemSpacing = 10
         layout.minimumLineSpacing = 10
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         return layout
     }()
 
     private var listLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
-        let width = UIScreen.main.bounds.width - 20
-        layout.itemSize = CGSize(width: width, height: 80)
         layout.minimumLineSpacing = 10
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 20, height: 80)
         return layout
     }()
     
     
+    // MARK: - View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        
         
         view.backgroundColor = .systemBackground
         title = "QR Codes"
-        navigationItem.largeTitleDisplayMode = .always
+        
+        setupNavigationBar()
+        
+//        setupSegmentedControl()
         
         setupCollectionView()
-        setupNavigationBar()
-        setupSegmentedControl()
+        
+
+        collectionView.collectionViewLayout = gridLayout
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        
+        view.addSubview(segmentedControl)
+        view.addSubview(collectionView)
+        
+        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        setupLayout()
+        
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        
+        segmentedControl.selectedSegmentIndex = 0
+        //collectionView.collectionViewLayout = listLayout
+        //segmentedControl.selectedSegmentIndex = 1
+        segmentedControl.addTarget(self, action: #selector(layoutChanged), for: .valueChanged)
     }
     
-    // MARK: Helper methods
+    
+    @objc private func layoutChanged() {
+        let layout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
+        collectionView.setCollectionViewLayout(layout, animated: true)
+        collectionView.reloadData()
+    }
+
+    // MARK: - Helper methods
     
     private func setupNavigationBar(){
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .blue
-        
+        appearance.backgroundColor = .systemTeal
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white, .font: UIFont.boldSystemFont(ofSize: 30)]
         appearance.titleTextAttributes = [.foregroundColor: UIColor.white, .font: UIFont.systemFont(ofSize: 30, weight: .semibold)]
-        
-        navigationItem.titleView = segmentedControl
-        
+                
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         navigationController?.navigationBar.compactAppearance = appearance
     }
     
     private func setupCollectionView(){
-        layout.itemSize = CGSize(width: 100, height: 100)
-        layout.minimumLineSpacing = 10
-        layout.minimumInteritemSpacing = 10
-        layout.scrollDirection = .vertical
 
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        
-        
-        //add on for this
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.backgroundColor = .clear
-        view.addSubview(collectionView)
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         collectionView.register(QRListCell.self, forCellWithReuseIdentifier: QRListCell.reuseID)
-        collectionView.dataSource = self
+
     }
     
     private func setupSegmentedControl(){
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.addTarget(self, action: #selector(layoutChanged), for: .valueChanged)
-
     }
 
-
-    @objc private func layoutChanged() {
-        let layout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
-        collectionView.setCollectionViewLayout(layout, animated: true)
-        collectionView.reloadData()
-    }
+//    @objc private func layoutChanged() {
+//        let layout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
+//        collectionView.setCollectionViewLayout(layout, animated: true)
+//        
+//        collectionView.reloadData()
+//    }
     
-    private func setupUI(){
+    private func setupLayout(){
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
-            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 12),
-            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -12),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+
+            segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            segmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            segmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            collectionView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 10),
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
     
-    
-    // add on by xf//
-    private struct QRItem {
-        let text: String
-        let date: Date
-    }
-
-    private let dateFormatter: DateFormatter = {
-        let df = DateFormatter()
-        df.dateFormat = "dd/MM/yy, HH:mm"
-        return df
-    }()
-
-    private var items: [QRItem] = [
-        QRItem(text: "https://www.apple.com", date: Date(timeIntervalSinceNow: -1200)),
-        QRItem(text: "WIFI:T:WPA;S:MyNetwork;P:password123;;", date: Date(timeIntervalSinceNow: -3600)),
-        QRItem(text: "mailto:hello@example.com", date: Date(timeIntervalSinceNow: -7200)),
-        QRItem(text: "tel:+1234567890", date: Date(timeIntervalSinceNow: -10800))
+    private let items: [QRCode] = [
+        QRCode(url: "https://www.apple.com", date: Date(timeIntervalSinceNow: -1200)),
+        QRCode(url: "WIFI:T:WPA;S:MyNetwork;P:password123;;", date: Date(timeIntervalSinceNow: -3600)),
+        QRCode(url: "mailto:hello@example.com", date: Date(timeIntervalSinceNow: -7200)),
+        QRCode(url: "tel:+1234567890", date: Date(timeIntervalSinceNow: -10800))
     ]
 }
 
-extension MainViewController: UICollectionViewDataSource {
+extension MainViewController: UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        items.count
+        return items.count
     }
+}
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let item = items[indexPath.item]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: QRListCell.reuseID, for: indexPath) as! QRListCell
-        cell.configure(title: item.text, dateText: dateFormatter.string(from: item.date))
-        return cell
-    }
+extension MainViewController: UICollectionViewDelegate{
     
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+
+        let item = items[indexPath.item]
+//       /* if segmentedControl.selectedSegmentIndex == 0*/ {
+//            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+//            cell.backgroundColor = .systemTeal
+//            cell.layer.cornerRadius = 8
+//            return cell
+//        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: QRListCell.reuseID, for: indexPath) as! QRListCell
+            cell.backgroundColor = .systemOrange
+            let df = DateFormatter()
+            df.dateFormat = "dd/MM/yy, HH:mm"
+            cell.configure(title: item.url, dateText: df.string(from: item.date))
+            return cell
+        }
+
+    }
+//}
+
+extension MainViewController: UICollectionViewDelegateFlowLayout{
+    func collectionView(_ collectionView: UICollectionView,
+                                layout collectionViewLayout: UICollectionViewLayout,
+                                sizeForItemAt indexPath: IndexPath) -> CGSize {
+
+
+        let contentWidth = collectionView.bounds.width -
+                             collectionView.safeAreaInsets.left -
+                             collectionView.safeAreaInsets.right
+
+        if collectionViewLayout == gridLayout {
+            let spacing = gridLayout.minimumInteritemSpacing
+            let totalPadding = gridLayout.sectionInset.left + gridLayout.sectionInset.right + spacing
+            let width = (contentWidth - totalPadding) / 2
+            let validWidth = max(0, width)
+            return CGSize(width: validWidth, height: validWidth)
+
+        } else if collectionViewLayout == listLayout {
+            let totalPadding = listLayout.sectionInset.left + listLayout.sectionInset.right
+            let width = contentWidth - totalPadding
+            let validWidth = max(0, width)
+            return CGSize(width: validWidth, height: 80)
+        }
+        return CGSize(width: 50, height: 50)
+    }
 }

@@ -48,7 +48,7 @@ final class QRListCell: UICollectionViewCell {
     private func setupUI() {
         contentView.addSubview(container)
         container.translatesAutoresizingMaskIntoConstraints = false
-        container.backgroundColor = .secondarySystemBackground
+        //container.backgroundColor = .secondarySystemBackground
         container.layer.cornerRadius = 16
         container.layer.masksToBounds = true
 
