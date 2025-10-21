@@ -8,6 +8,10 @@ class MainViewController: UIViewController {
     
     var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
+    private var qrCodes: [QRCode] = [
+        QRCode(url: "https://www.apple.com/", date: Date.now)
+    ]
+    
     private var gridLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumInteritemSpacing = 10
@@ -72,20 +76,24 @@ class MainViewController: UIViewController {
     
     private func setupCollectionView(){
 
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(QRCodeGridCell.self, forCellWithReuseIdentifier: QRCodeGridCell.reuseIdentifier)
     }
     
-//    private func setupSegmentedControl(){
-//        segmentedControl.selectedSegmentIndex = 0
-//        segmentedControl.addTarget(self, action: #selector(layoutChanged), for: .valueChanged)
-//    }
+    private func setupSegmentedControl(){
+        segmentedControl.selectedSegmentIndex = 0
+       
+        segmentedControl.addAction(UIAction(handler: { _ in
+            self.layoutChanged()
+        }), for: .touchUpInside)
+    }
 
-//    @objc private func layoutChanged() {
+    private func layoutChanged() {
 //        let layout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
-//        collectionView.setCollectionViewLayout(layout, animated: true)
-//        
-//        collectionView.reloadData()
-//    }
+        let layout = gridLayout
+        collectionView.setCollectionViewLayout(layout, animated: true)
+        
+        collectionView.reloadData()
+    }
     
     private func setupLayout(){
         NSLayoutConstraint.activate([
@@ -104,24 +112,42 @@ class MainViewController: UIViewController {
 
 extension MainViewController: UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        
+        if qrCodes.count == 0 {
+            let noDataLabel: UILabel = UILabel(frame: CGRect(x: 0, y: 0, width: collectionView.bounds.size.width, height: collectionView.bounds.size.height))
+            noDataLabel.text = "No QR Codes saved yet!"
+            noDataLabel.textColor = UIColor.gray
+            noDataLabel.textAlignment = .center
+            collectionView.backgroundView = noDataLabel
+        } else {
+            collectionView.backgroundView = nil
+        }
+        
+        return qrCodes.count
+    
     }
+
 }
 
 extension MainViewController: UICollectionViewDelegate{
     
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
         
-        if segmentedControl.selectedSegmentIndex == 0 {
-            cell.backgroundColor = .systemTeal
-        } else {
-            cell.backgroundColor = .systemOrange
-        }
-        cell.layer.cornerRadius = 8
-        
-        return cell
+//        if segmentedControl.selectedSegmentIndex == 0 {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: QRCodeGridCell.reuseIdentifier, for: indexPath) as? QRCodeGridCell else {
+                fatalError("Unable to dequeue QRCodeGridCell")
+            }
+            
+            let qrCode = qrCodes[indexPath.item]
+            
+            cell.configure(with: qrCode)
+            
+
+            return cell
+//        }
+//
+//        return UICollectionViewCell()
     }
     
 }
