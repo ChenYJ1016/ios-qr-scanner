@@ -44,10 +44,10 @@ class MainViewController: UIViewController {
         view.backgroundColor = .systemBackground
         title = "QR Codes"
         
+        segmentedControl.selectedSegmentIndex = 0
+
         setupNavigationBar()
-        
-//        setupSegmentedControl()
-        
+                
         setupCollectionView()
         
 
@@ -74,10 +74,25 @@ class MainViewController: UIViewController {
     
     
     @objc private func layoutChanged() {
-        let layout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
-        collectionView.setCollectionViewLayout(layout, animated: true)
-        collectionView.reloadData()
-    }
+            print("index: \(segmentedControl.selectedSegmentIndex)")
+            
+            // 1. Get the new layout
+            let newLayout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
+            
+            // 2. Set the new layout (non-animated)
+            // We do this first so that when reloadData() is called,
+            // both cellForItemAt and sizeForItemAt use the correct layout.
+            collectionView.collectionViewLayout = newLayout
+            
+            // 3. Animate the data reload with a cross-dissolve
+            UIView.transition(with: collectionView,
+                              duration: 0.35, // You can adjust this duration
+                              options: .transitionCrossDissolve,
+                              animations: {
+                                self.collectionView.reloadData()
+                              },
+                              completion: nil)
+        }
 
     // MARK: - Helper methods
     
@@ -100,23 +115,6 @@ class MainViewController: UIViewController {
         collectionView.register(QRListCell.self, forCellWithReuseIdentifier: QRListCell.reuseID)
 
     }
-    
-    private func setupSegmentedControl(){
-        segmentedControl.selectedSegmentIndex = 0
-       
-        segmentedControl.addAction(UIAction(handler: { _ in
-            self.layoutChanged()
-        }), for: .touchUpInside)
-//         segmentedControl.addTarget(self, action: #selector(layoutChanged), for: .valueChanged)
-    }
-
-//    private func layoutChanged() {
-//       let layout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
-////         let layout = gridLayout
-//        collectionView.setCollectionViewLayout(layout, animated: true)
-//        
-//        collectionView.reloadData()
-//    }
     
     private func setupLayout(){
         NSLayoutConstraint.activate([
@@ -159,7 +157,7 @@ extension MainViewController: UICollectionViewDelegate{
         
 
         let item = items[indexPath.item]
-       if segmentedControl.selectedSegmentIndex == 0 {
+       if collectionView.collectionViewLayout == gridLayout {
            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: QRCodeGridCell.reuseIdentifier, for: indexPath)as? QRCodeGridCell else {
                 fatalError("Unable to dequeue QRCodeGridCell")
             }

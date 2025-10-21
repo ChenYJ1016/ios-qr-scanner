@@ -46,7 +46,7 @@ class QRCodeGridCell: UICollectionViewCell{
         stackView.axis = .vertical
         stackView.alignment = .center
         stackView.spacing = 10
-        stackView.distribution = .fill
+        stackView.distribution = .equalSpacing
         
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
