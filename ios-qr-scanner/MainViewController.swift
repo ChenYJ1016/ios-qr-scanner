@@ -13,16 +13,29 @@ class MainViewController: UIViewController {
 //     private var qrCodes: [QRCode] = [
 //         QRCode(url: "https://www.apple.com/", date: Date.now)
 //     ]
+    // Keep this property as-is (no iOS 15 API)
     private lazy var scanButton: UIButton = {
         let b = UIButton(type: .system)
         b.setTitle("Scan", for: .normal)
         b.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
-        b.backgroundColor = .secondarySystemBackground
-        b.layer.cornerRadius = 18
+        b.setTitleColor(.systemTeal, for: .normal)
+        //b.backgroundColor = .white
+        b.layer.cornerRadius = 16
+        b.layer.masksToBounds = true
         b.addTarget(self, action: #selector(onScanTapped), for: .touchUpInside)
-        b.translatesAutoresizingMaskIntoConstraints = false
         return b
     }()
+    
+    private func addScanNavButton() {
+        let barItem = UIBarButtonItem(customView: scanButton)
+        navigationItem.rightBarButtonItem = barItem
+        scanButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            scanButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 32)
+        ])
+    }
+
+
     
     private var items: [QRCode] = [
         QRCode(url: "https://www.apple.com", date: Date(timeIntervalSinceNow: -1200)),
@@ -67,7 +80,7 @@ class MainViewController: UIViewController {
         
         view.addSubview(segmentedControl)
         view.addSubview(collectionView)
-        view.addSubview(scanButton)
+        //view.addSubview(scanButton)
         
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -81,6 +94,7 @@ class MainViewController: UIViewController {
         //collectionView.collectionViewLayout = listLayout
         //segmentedControl.selectedSegmentIndex = 1
         segmentedControl.addTarget(self, action: #selector(layoutChanged), for: .valueChanged)
+        addScanNavButton()
 
     }
     
@@ -152,8 +166,6 @@ class MainViewController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            scanButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            scanButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
     }
 }
