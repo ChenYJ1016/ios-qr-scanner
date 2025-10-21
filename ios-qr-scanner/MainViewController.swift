@@ -16,12 +16,12 @@ class MainViewController: UIViewController {
         return layout
     }()
 
-    private var listLayout: UICollectionViewFlowLayout = {
-        let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing = 10
-        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        return layout
-    }()
+//    private var listLayout: UICollectionViewFlowLayout = {
+//        let layout = UICollectionViewFlowLayout()
+//        layout.minimumLineSpacing = 10
+//        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+//        return layout
+//    }()
     
     
     // MARK: - View Lifecycle
@@ -34,7 +34,7 @@ class MainViewController: UIViewController {
         
         setupNavigationBar()
         
-        setupSegmentedControl()
+//        setupSegmentedControl()
         
         setupCollectionView()
         
@@ -75,17 +75,17 @@ class MainViewController: UIViewController {
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
     }
     
-    private func setupSegmentedControl(){
-        segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.addTarget(self, action: #selector(layoutChanged), for: .valueChanged)
-    }
+//    private func setupSegmentedControl(){
+//        segmentedControl.selectedSegmentIndex = 0
+//        segmentedControl.addTarget(self, action: #selector(layoutChanged), for: .valueChanged)
+//    }
 
-    @objc private func layoutChanged() {
-        let layout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
-        collectionView.setCollectionViewLayout(layout, animated: true)
-        
-        collectionView.reloadData()
-    }
+//    @objc private func layoutChanged() {
+//        let layout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
+//        collectionView.setCollectionViewLayout(layout, animated: true)
+//        
+//        collectionView.reloadData()
+//    }
     
     private func setupLayout(){
         NSLayoutConstraint.activate([
@@ -144,12 +144,12 @@ extension MainViewController: UICollectionViewDelegateFlowLayout{
             let validWidth = max(0, width)
             return CGSize(width: validWidth, height: validWidth)
 
-        } else if collectionViewLayout == listLayout {
-            let totalPadding = listLayout.sectionInset.left + listLayout.sectionInset.right
-            let width = contentWidth - totalPadding
-            
-            let validWidth = max(0, width)
-            return CGSize(width: validWidth, height: 80)
+//        } else if collectionViewLayout == listLayout {
+//            let totalPadding = listLayout.sectionInset.left + listLayout.sectionInset.right
+//            let width = contentWidth - totalPadding
+//            
+//            let validWidth = max(0, width)
+//            return CGSize(width: validWidth, height: 80)
         }
 
         return CGSize(width: 50, height: 50)
