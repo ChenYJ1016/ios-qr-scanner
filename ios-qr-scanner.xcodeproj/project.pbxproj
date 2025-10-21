@@ -6,8 +6,32 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		60D8F1B62EA764B400741265 /* QRScanner.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60D8F1B02EA7646400741265 /* QRScanner.xcframework */; };
+		60D8F1B72EA764B400741265 /* QRScanner.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 60D8F1B02EA7646400741265 /* QRScanner.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		60D8F1B82EA764B400741265 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				60D8F1B72EA764B400741265 /* QRScanner.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		397404312EA7172000FAAA4A /* ios-qr-scanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ios-qr-scanner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		60D8F1AD2EA7646400741265 /* QRScanner.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QRScanner.framework; sourceTree = "<group>"; };
+		60D8F1AF2EA7646400741265 /* .QRScanner.version */ = {isa = PBXFileReference; lastKnownFileType = text; path = .QRScanner.version; sourceTree = "<group>"; };
+		60D8F1B02EA7646400741265 /* QRScanner.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = QRScanner.xcframework; sourceTree = "<group>"; };
+		60D8F1B22EA7646400741265 /* QRScanner */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = QRScanner; sourceTree = "<group>"; };
+		60D8F1B52EA764A000741265 /* QRScanner.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; name = QRScanner.xcworkspace; path = Carthage/Checkouts/QRScanner/QRScanner.xcworkspace; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60D8F1B62EA764B400741265 /* QRScanner.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,6 +71,7 @@
 			isa = PBXGroup;
 			children = (
 				397404332EA7172000FAAA4A /* ios-qr-scanner */,
+				60D8F1AC2EA7633300741265 /* Frameworks */,
 				397404322EA7172000FAAA4A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -58,6 +84,50 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		60D8F1AC2EA7633300741265 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				60D8F1B52EA764A000741265 /* QRScanner.xcworkspace */,
+				60D8F1B42EA7646400741265 /* Carthage */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		60D8F1AE2EA7646400741265 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				60D8F1AD2EA7646400741265 /* QRScanner.framework */,
+			);
+			path = iOS;
+			sourceTree = "<group>";
+		};
+		60D8F1B12EA7646400741265 /* Build */ = {
+			isa = PBXGroup;
+			children = (
+				60D8F1AE2EA7646400741265 /* iOS */,
+				60D8F1AF2EA7646400741265 /* .QRScanner.version */,
+				60D8F1B02EA7646400741265 /* QRScanner.xcframework */,
+			);
+			path = Build;
+			sourceTree = "<group>";
+		};
+		60D8F1B32EA7646400741265 /* Checkouts */ = {
+			isa = PBXGroup;
+			children = (
+				60D8F1B22EA7646400741265 /* QRScanner */,
+			);
+			path = Checkouts;
+			sourceTree = "<group>";
+		};
+		60D8F1B42EA7646400741265 /* Carthage */ = {
+			isa = PBXGroup;
+			children = (
+				60D8F1B12EA7646400741265 /* Build */,
+				60D8F1B32EA7646400741265 /* Checkouts */,
+			);
+			path = Carthage;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -68,6 +138,7 @@
 				3974042D2EA7172000FAAA4A /* Sources */,
 				3974042E2EA7172000FAAA4A /* Frameworks */,
 				3974042F2EA7172000FAAA4A /* Resources */,
+				60D8F1B82EA764B400741265 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -147,6 +218,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "ios-qr-scanner/Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access is required for QR code scanning";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -177,6 +249,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "ios-qr-scanner/Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access is required for QR code scanning";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

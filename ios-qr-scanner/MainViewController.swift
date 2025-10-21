@@ -1,4 +1,6 @@
 import UIKit
+import AVFoundation
+import QRScanner
 
 class MainViewController: UIViewController {
     
@@ -11,8 +13,18 @@ class MainViewController: UIViewController {
 //     private var qrCodes: [QRCode] = [
 //         QRCode(url: "https://www.apple.com/", date: Date.now)
 //     ]
+    private lazy var scanButton: UIButton = {
+        let b = UIButton(type: .system)
+        b.setTitle("Scan", for: .normal)
+        b.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
+        b.backgroundColor = .secondarySystemBackground
+        b.layer.cornerRadius = 18
+        b.addTarget(self, action: #selector(onScanTapped), for: .touchUpInside)
+        b.translatesAutoresizingMaskIntoConstraints = false
+        return b
+    }()
     
-    private let items: [QRCode] = [
+    private var items: [QRCode] = [
         QRCode(url: "https://www.apple.com", date: Date(timeIntervalSinceNow: -1200)),
         QRCode(url: "WIFI:T:WPA;S:MyNetwork;P:password123;;", date: Date(timeIntervalSinceNow: -3600)),
         QRCode(url: "mailto:hello@example.com", date: Date(timeIntervalSinceNow: -7200)),
@@ -45,9 +57,7 @@ class MainViewController: UIViewController {
         title = "QR Codes"
         
         setupNavigationBar()
-        
 //        setupSegmentedControl()
-        
         setupCollectionView()
         
 
@@ -57,6 +67,7 @@ class MainViewController: UIViewController {
         
         view.addSubview(segmentedControl)
         view.addSubview(collectionView)
+        view.addSubview(scanButton)
         
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -70,14 +81,27 @@ class MainViewController: UIViewController {
         //collectionView.collectionViewLayout = listLayout
         //segmentedControl.selectedSegmentIndex = 1
         segmentedControl.addTarget(self, action: #selector(layoutChanged), for: .valueChanged)
+
     }
-    
     
     @objc private func layoutChanged() {
         let layout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
         collectionView.setCollectionViewLayout(layout, animated: true)
         collectionView.reloadData()
     }
+    
+    @objc private func onScanTapped() {
+        let vc = ScanViewController()
+        vc.modalPresentationStyle = .fullScreen
+        vc.onCodeScanned = { [weak self] (value: String) in
+            guard let self else { return }
+            self.items.insert(QRCode(url: value, date: Date()), at: 0)
+            self.collectionView.reloadData()
+            self.collectionView.setContentOffset(.zero, animated: true)
+        }
+        present(vc, animated: true)
+    }
+
 
     // MARK: - Helper methods
     
@@ -127,7 +151,9 @@ class MainViewController: UIViewController {
             collectionView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 10),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            scanButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            scanButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
     }
 }
@@ -145,11 +171,8 @@ extension MainViewController: UICollectionViewDataSource{
         } else {
             collectionView.backgroundView = nil
         }
-        
         return items.count
-    
     }
-
 }
 
 extension MainViewController: UICollectionViewDelegate{
@@ -205,3 +228,6 @@ extension MainViewController: UICollectionViewDelegateFlowLayout{
         return CGSize(width: 50, height: 50)
     }
 }
+
+
+
