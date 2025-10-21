@@ -74,7 +74,6 @@ class MainViewController: UIViewController {
     
     
     @objc private func layoutChanged() {
-            print("index: \(segmentedControl.selectedSegmentIndex)")
             
             // 1. Get the new layout
             let newLayout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
@@ -167,13 +166,24 @@ extension MainViewController: UICollectionViewDelegate{
            return cell
        } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: QRListCell.reuseID, for: indexPath) as! QRListCell
-            cell.backgroundColor = .systemOrange
             let df = DateFormatter()
             df.dateFormat = "dd/MM/yy, HH:mm"
             cell.configure(title: item.url, dateText: df.string(from: item.date))
             return cell
         }
 
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedQrCode = items[indexPath.item]
+        let detailVC = QRCodeDetailViewController()
+        detailVC.qrCode = selectedQrCode
+        
+        if let sheet = detailVC.sheetPresentationController {
+            sheet.detents = [.medium()]
+            sheet.prefersGrabberVisible = true
+        }
+        present(detailVC, animated: true)
     }
 }
 

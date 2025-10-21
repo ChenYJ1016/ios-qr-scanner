@@ -6,8 +6,29 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		397404ED2EA76EF100FAAA4A /* QRScanner.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 397404EC2EA76EF100FAAA4A /* QRScanner.xcframework */; };
+		397404EE2EA76EF100FAAA4A /* QRScanner.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 397404EC2EA76EF100FAAA4A /* QRScanner.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		397404EF2EA76EF100FAAA4A /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				397404EE2EA76EF100FAAA4A /* QRScanner.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		397404312EA7172000FAAA4A /* ios-qr-scanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ios-qr-scanner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		397404EB2EA76D5000FAAA4A /* QRScanner.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; name = QRScanner.xcworkspace; path = Carthage/Checkouts/QRScanner/QRScanner.xcworkspace; sourceTree = "<group>"; };
+		397404EC2EA76EF100FAAA4A /* QRScanner.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = QRScanner.xcframework; path = Carthage/Build/QRScanner.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				397404ED2EA76EF100FAAA4A /* QRScanner.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,6 +68,7 @@
 			isa = PBXGroup;
 			children = (
 				397404332EA7172000FAAA4A /* ios-qr-scanner */,
+				397404EA2EA76D4F00FAAA4A /* Frameworks */,
 				397404322EA7172000FAAA4A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -58,6 +81,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		397404EA2EA76D4F00FAAA4A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				397404EC2EA76EF100FAAA4A /* QRScanner.xcframework */,
+				397404EB2EA76D5000FAAA4A /* QRScanner.xcworkspace */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -68,6 +100,7 @@
 				3974042D2EA7172000FAAA4A /* Sources */,
 				3974042E2EA7172000FAAA4A /* Frameworks */,
 				3974042F2EA7172000FAAA4A /* Resources */,
+				397404EF2EA76EF100FAAA4A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
