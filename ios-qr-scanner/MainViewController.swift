@@ -12,6 +12,13 @@ class MainViewController: UIViewController {
 //         QRCode(url: "https://www.apple.com/", date: Date.now)
 //     ]
     
+    private let items: [QRCode] = [
+        QRCode(url: "https://www.apple.com", date: Date(timeIntervalSinceNow: -1200)),
+        QRCode(url: "WIFI:T:WPA;S:MyNetwork;P:password123;;", date: Date(timeIntervalSinceNow: -3600)),
+        QRCode(url: "mailto:hello@example.com", date: Date(timeIntervalSinceNow: -7200)),
+        QRCode(url: "tel:+1234567890", date: Date(timeIntervalSinceNow: -10800))
+    ]
+    
     private var gridLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumInteritemSpacing = 10
@@ -24,7 +31,7 @@ class MainViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 10
         layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 20, height: 80)
+//        layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 20, height: 80)
         return layout
     }()
     
@@ -103,13 +110,13 @@ class MainViewController: UIViewController {
 //         segmentedControl.addTarget(self, action: #selector(layoutChanged), for: .valueChanged)
     }
 
-    private func layoutChanged() {
-       let layout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
-//         let layout = gridLayout
-        collectionView.setCollectionViewLayout(layout, animated: true)
-        
-        collectionView.reloadData()
-    }
+//    private func layoutChanged() {
+//       let layout = segmentedControl.selectedSegmentIndex == 0 ? gridLayout : listLayout
+////         let layout = gridLayout
+//        collectionView.setCollectionViewLayout(layout, animated: true)
+//        
+//        collectionView.reloadData()
+//    }
     
     private func setupLayout(){
         NSLayoutConstraint.activate([
@@ -125,15 +132,6 @@ class MainViewController: UIViewController {
     }
 }
 
-extension MainViewController: UICollectionViewDelegate{
-    
-    private let items: [QRCode] = [
-        QRCode(url: "https://www.apple.com", date: Date(timeIntervalSinceNow: -1200)),
-        QRCode(url: "WIFI:T:WPA;S:MyNetwork;P:password123;;", date: Date(timeIntervalSinceNow: -3600)),
-        QRCode(url: "mailto:hello@example.com", date: Date(timeIntervalSinceNow: -7200)),
-        QRCode(url: "tel:+1234567890", date: Date(timeIntervalSinceNow: -10800))
-    ]
-}
 
 extension MainViewController: UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -148,7 +146,7 @@ extension MainViewController: UICollectionViewDataSource{
             collectionView.backgroundView = nil
         }
         
-        return qrCodes.count
+        return items.count
     
     }
 
@@ -162,12 +160,12 @@ extension MainViewController: UICollectionViewDelegate{
 
         let item = items[indexPath.item]
        if segmentedControl.selectedSegmentIndex == 0 {
-           let cell = collectionView.dequeueReusableCell(withReuseIdentifier: QRCodeGridCell.reuseIdentifier, for: indexPath)as? QRCodeGridCell else {
+           guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: QRCodeGridCell.reuseIdentifier, for: indexPath)as? QRCodeGridCell else {
                 fatalError("Unable to dequeue QRCodeGridCell")
             }
-           let qrCode = qrCodes[indexPath.item]
+           let qrCode = items[indexPath.item]
             
-            cell.configure(with: qrCode)
+           cell.configure(with: qrCode)
            return cell
        } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: QRListCell.reuseID, for: indexPath) as! QRListCell
@@ -179,7 +177,7 @@ extension MainViewController: UICollectionViewDelegate{
         }
 
     }
-//}
+}
 
 extension MainViewController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView,
